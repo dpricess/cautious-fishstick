@@ -49,6 +49,8 @@ function initGraph(a = 1, b = 0, c = 0) {
                         },
                 ticks: {
                             color: 'blue' // x-axis tick labels in blue
+                            display: true,
+                            stepsize=2
                         },
                 
                     min: -15, 
