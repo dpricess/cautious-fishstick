@@ -43,6 +43,7 @@ function initGraph(a = 1, b = 0, c = 0) {
                     type: 'linear', 
                     position: 'bottom', 
                  grid: {
+                             drawTicks: true,
                             color: (ctx) => ctx.tick.value === 0 ? 'red' : 'gray', // x-axis in blue, grid lines in gray
                             lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 0.5 // Thicker for the x-axis
                         },
@@ -56,6 +57,7 @@ function initGraph(a = 1, b = 0, c = 0) {
                 y: { 
                     type: 'linear',
                     grid: {
+                        drawTicks: true,
                         color: (ctx) => ctx.tick.value === 0 ? 'green' : 'gray', // y-axis in green, grid lines in gray
                             lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 0.5 // Thicker for the y-axis
                         },
