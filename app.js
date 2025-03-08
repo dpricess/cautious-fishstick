@@ -58,8 +58,6 @@ function initGraph(a = 1, b = 0, c = 0) {
             plugins: { legend: { display: false } }
         }
     });
-    cursorX = vertexX;
-    cursorY = vertexY;
 }
 
 // Screen renderer
@@ -161,19 +159,21 @@ document.querySelectorAll('#equation-input input').forEach(input => {
 // Cursor dragging
 canvas.addEventListener('mousedown', (e) => {
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / 15 - 10;
+    const x = (e.clientX - rect.left - 150) / 15; // Center at 150px (300px canvas / 2)
     const y = -(e.clientY - rect.top - 150) / 15;
-    const vertexX = -parseFloat(document.getElementById('b').value) / (2 * parseFloat(document.getElementById('a').value));
-    if (Math.hypot(x - cursorX, y - cursorY) < 1) {
+    const distance = Math.hypot(x - cursorX, y - cursorY);
+    console.log(`Mouse: (${x.toFixed(1)}, ${y.toFixed(1)}), Cursor: (${cursorX.toFixed(1)}, ${cursorY.toFixed(1)}), Distance: ${distance.toFixed(1)}`);
+    if (distance < 0.5) { // Smaller hitbox for precision
         dragging = true;
-        dragMode = Math.abs(x - vertexX) < 1 ? 'vertex' : 'stretch';
+        const vertexX = -parseFloat(document.getElementById('b').value) / (2 * parseFloat(document.getElementById('a').value));
+        dragMode = Math.abs(x - vertexX) < 0.5 ? 'vertex' : 'stretch';
     }
 });
 
 canvas.addEventListener('mousemove', (e) => {
     if (dragging) {
-        const rect = canvas.getBoundingRect();
-        cursorX = (e.clientX - rect.left) / 15 - 10;
+        const rect = canvas.getBoundingClientRect();
+        cursorX = (e.clientX - rect.left - 150) / 15;
         cursorY = -(e.clientY - rect.top - 150) / 15;
         
         let a = parseFloat(document.getElementById('a').value);
