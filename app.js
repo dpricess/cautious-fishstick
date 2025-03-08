@@ -2,8 +2,14 @@
 let stage = 'welcome';
 let score = 0;
 let gaps = [];
-const ctx = document.getElementById('graph').getContext('2d');
+const canvas = document.getElementById('graph');
+const ctx = canvas.getContext('2d');
 let chart;
+
+// Cursor position (initially at vertex)
+let cursorX = 0;
+let cursorY = 0;
+let dragging = false;
 
 // Graph setup
 function initGraph(a = 1, b = 0, c = 0) {
@@ -14,9 +20,31 @@ function initGraph(a = 1, b = 0, c = 0) {
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
         type: 'line',
-        data: { datasets: [{ label: 'y = ax² + bx + c', data, borderColor: 'blue', fill: false }] },
-        options: { scales: { x: { type: 'linear', position: 'bottom' }, y: {} }, plugins: { legend: { display: false } } }
+        data: { datasets: [{ label: 'y = ax² + bx + c', data, borderColor: 'black', fill: false, pointRadius: 0 }] },
+        options: {
+            scales: {
+                x: { type: 'linear', position: 'bottom', grid: { color: 'blue' }, ticks: { color: 'blue' } },
+                y: { grid: { color: 'green' }, ticks: { color: 'green' } }
+            },
+            plugins: { legend: { display: false } }
+        }
     });
+    // Update cursor to vertex
+    cursorX = -b / (2 * a);
+    cursorY = a * cursorX * cursorX + b * cursorX + c;
+    drawCursor();
+}
+
+// Draw cursor
+function drawCursor() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear for Chart.js redraw
+    chart.update();
+    const xPixel = (cursorX + 10) * 15; // Scale to canvas (300px, -10 to 10)
+    const yPixel = 150 - cursorY * 15; // Center at 150, invert y
+    ctx.beginPath();
+    ctx.arc(xPixel, yPixel, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = 'red';
+    ctx.fill();
 }
 
 // Screen renderer
@@ -71,7 +99,7 @@ function checkAnswer(choice) {
 
 // Learning
 const lessons = [
-    { text: 'Quadratics are ax² + bx + c = 0. Try changing a, b, c below!', practice: 'Graph y = x² - 4' },
+    { text: 'Quadratics are ax² + bx + c = 0. Try dragging the red dot!', practice: 'Graph y = x² - 4' },
     { text: 'Factor x² - 5x + 6 = 0: (x - 2)(x - 3) = 0, x = 2, 3', practice: 'Factor x² + 7x + 12 = 0' },
     { text: 'Formula: x = (-b ± √(b² - 4ac)) / 2a. Solve 2x² + 3x - 2 = 0', practice: 'Solve x² - 4x - 5 = 0' }
 ];
@@ -90,7 +118,6 @@ function renderLearning() {
 
 function checkPractice() {
     const answer = document.getElementById('answer').value;
-    // Simple check (expand for robustness)
     if (answer.includes('x') || answer.includes('=') || answer.match(/\d/)) lIndex++;
     render();
 }
@@ -100,10 +127,10 @@ function renderReport() {
     const screen = document.getElementById('screen');
     const progress = (score / questions.length) * 100;
     screen.innerHTML = `<p>Your Mastery: ${progress}%</p><p>Gaps Closed: ${gaps.length > 0 ? gaps.join(', ') : 'None'}</p>`;
-    document.getElementById('report').innerHTML = 'Drag the graph or edit a, b, c to keep exploring!';
+    document.getElementById('report').innerHTML = 'Keep dragging the cursor to explore!';
 }
 
-// Interactive Graph
+// Equation inputs
 document.querySelectorAll('#equation-input input').forEach(input => {
     input.addEventListener('input', () => {
         const a = parseFloat(document.getElementById('a').value);
@@ -113,23 +140,38 @@ document.querySelectorAll('#equation-input input').forEach(input => {
     });
 });
 
-// Basic drag interaction (simplified)
-let dragging = false;
-ctx.canvas.addEventListener('mousedown', () => dragging = true);
-ctx.canvas.addEventListener('mouseup', () => dragging = false);
-ctx.canvas.addEventListener('mousemove', (e) => {
+// Cursor dragging
+canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / 15 - 10; // Scale to -10 to 10
+    const y = -(e.clientY - rect.top - 150) / 15; // Center at 150
+    if (Math.hypot(x - cursorX, y - cursorY) < 1) dragging = true; // Near cursor
+});
+
+canvas.addEventListener('mousemove', (e) => {
     if (dragging) {
-        const rect = ctx.canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left - 200) / 20; // Scale to graph coords
-        const y = -(e.clientY - rect.top - 200) / 20;
-        const a = parseFloat(document.getElementById('a').value);
-        const b = -2 * a * x; // Vertex shift
-        const c = y - a * x * x; // Adjust c
+        const rect = canvas.getBoundingClientRect();
+        cursorX = (e.clientX - rect.left) / 15 - 10;
+        cursorY = -(e.clientY - rect.top - 150) / 15;
+        
+        let a = parseFloat(document.getElementById('a').value);
+        const b = -2 * a * cursorX; // Vertex at cursorX
+        const c = cursorY - a * cursorX * cursorX; // Solve for c
+        
+        // If far from vertex, adjust 'a' to stretch
+        const vertexY = a * cursorX * cursorX + b * cursorX + c;
+        if (Math.abs(cursorY - vertexY) > 0.5) {
+            a = (cursorY - c) / (cursorX * cursorX); // Recalculate a
+        }
+
+        document.getElementById('a').value = a.toFixed(1);
         document.getElementById('b').value = b.toFixed(1);
         document.getElementById('c').value = c.toFixed(1);
         initGraph(a, b, c);
     }
 });
+
+canvas.addEventListener('mouseup', () => dragging = false);
 
 // Start
 initGraph();
