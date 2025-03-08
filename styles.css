@@ -3,10 +3,19 @@ body {
     text-align: center;
     padding: 20px;
 }
-#app { max-width: 600px; margin: auto; } /* Adjusted for smaller graph */
+#app { max-width: 600px; margin: auto; }
 #screen { margin: 20px 0; }
+#graph-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 #graph { border: 1px solid #ccc; }
-#equation-input { margin: 20px 0; }
-#equation-input label { margin: 0 10px; }
-#report { font-size: 0.9em; color: #555; }
+#equation-input {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+}
+#equation-input label { margin: 10px 0; }
+#report { font-size: 0.9em; color: #555; margin-top: 20px; }
 button { padding: 10px 20px; margin: 5px; }
