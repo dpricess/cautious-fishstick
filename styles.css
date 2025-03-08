@@ -1,0 +1,12 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+#app { max-width: 800px; margin: auto; }
+#screen { margin: 20px 0; }
+#graph { border: 1px solid #ccc; }
+#equation-input { margin: 20px 0; }
+#equation-input label { margin: 0 10px; }
+#report { font-size: 0.9em; color: #555; }
+button { padding: 10px 20px; margin: 5px; }
