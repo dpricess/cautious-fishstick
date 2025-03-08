@@ -42,8 +42,14 @@ function initGraph(a = 1, b = 0, c = 0) {
                 x: { 
                     type: 'linear', 
                     position: 'bottom', 
-                    grid: { color: 'gray' }, 
-                    ticks: { color: 'blue' }, 
+                 grid: {
+                            color: (ctx) => ctx.tick.value === 0 ? 'blue' : 'gray', // x-axis in blue, grid lines in gray
+                            lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 0.5 // Thicker for the x-axis
+                        },
+                ticks: {
+                            color: 'blue' // x-axis tick labels in blue
+                        }
+                    
                     min: -10, 
                     max: 10 
                 },
