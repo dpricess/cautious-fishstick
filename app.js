@@ -34,7 +34,8 @@ function initGraph(a = 1, b = 0, c = 0) {
             datasets: [
                 { label: 'Parabola', data, borderColor: 'black', fill: false, pointRadius: 0 },
                 { label: 'Vertex', data: [{ x: vertexX, y: vertexY }], pointRadius: 5, pointBackgroundColor: 'purple', showLine: false },
-                { label: 'Roots', data: roots, pointRadius: 5, pointBackgroundColor: 'orange', showLine: false }
+                { label: 'Roots', data: roots, pointRadius: 5, pointBackgroundColor: 'orange', showLine: false },
+                { label: 'Cursor', data: [{ x: cursorX, y: cursorY }], pointRadius: 5, pointBackgroundColor: 'red', showLine: false }
             ]
         },
         options: {
@@ -42,31 +43,14 @@ function initGraph(a = 1, b = 0, c = 0) {
                 x: { 
                     type: 'linear', 
                     position: 'bottom', 
-                 grid: {
-                             drawTicks: true,
-                            color: (ctx) => ctx.tick.value === 0 ? 'red' : 'gray', // x-axis in blue, grid lines in gray
-                            lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 0.5 // Thicker for the x-axis
-                        },
-                ticks: {
-                            color: 'blue', // x-axis tick labels in blue
-                            display: true,
-                            stepsize=2
-                        },
-                
-                    min: -15, 
-                    max: 15 
+                    grid: { color: 'gray', display: true }, 
+                    ticks: { color: 'blue', display: true, stepSize: 2 }, 
+                    min: -10, 
+                    max: 10 
                 },
                 y: { 
-                    type: 'linear',
-                    grid: {
-                        drawTicks: true,
-                        color: (ctx) => ctx.tick.value === 0 ? 'green' : 'gray', // y-axis in green, grid lines in gray
-                            lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 0.5 // Thicker for the y-axis
-                        },
-                        ticks: {
-                            color: 'green' // y-axis tick labels in green
-                        },
-                    
+                    grid: { color: 'gray', display: true }, 
+                    ticks: { color: 'red', display: true, stepSize: 2 }, 
                     min: -10, 
                     max: 10 
                 }
@@ -76,19 +60,6 @@ function initGraph(a = 1, b = 0, c = 0) {
     });
     cursorX = vertexX;
     cursorY = vertexY;
-    drawCursor();
-}
-
-// Draw cursor
-function drawCursor() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    chart.update();
-    const xPixel = (cursorX + 10) * 15;
-    const yPixel = 150 - cursorY * 15;
-    ctx.beginPath();
-    ctx.arc(xPixel, yPixel, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = 'red';
-    ctx.fill();
 }
 
 // Screen renderer
@@ -175,7 +146,7 @@ function renderReport() {
     document.getElementById('report').innerHTML = 'Keep dragging the cursor to explore!';
 }
 
-// Equation inputs (update on Enter)
+// Equation inputs
 document.querySelectorAll('#equation-input input').forEach(input => {
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -201,7 +172,7 @@ canvas.addEventListener('mousedown', (e) => {
 
 canvas.addEventListener('mousemove', (e) => {
     if (dragging) {
-        const rect = canvas.getBoundingClientRect();
+        const rect = canvas.getBoundingRect();
         cursorX = (e.clientX - rect.left) / 15 - 10;
         cursorY = -(e.clientY - rect.top - 150) / 15;
         
