@@ -48,7 +48,7 @@ function initGraph(a = 1, b = 0, c = 0) {
                             lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 0.5 // Thicker for the x-axis
                         },
                 ticks: {
-                            color: 'blue' // x-axis tick labels in blue
+                            color: 'blue', // x-axis tick labels in blue
                             display: true,
                             stepsize=2
                         },
