@@ -3,7 +3,7 @@ body {
     text-align: center;
     padding: 20px;
 }
-#app { max-width: 800px; margin: auto; }
+#app { max-width: 600px; margin: auto; } /* Adjusted for smaller graph */
 #screen { margin: 20px 0; }
 #graph { border: 1px solid #ccc; }
 #equation-input { margin: 20px 0; }
