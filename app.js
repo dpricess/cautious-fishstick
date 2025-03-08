@@ -48,14 +48,22 @@ function initGraph(a = 1, b = 0, c = 0) {
                         },
                 ticks: {
                             color: 'blue' // x-axis tick labels in blue
-                        }
-                    
+                        },
+                
                     min: -10, 
                     max: 10 
                 },
                 y: { 
-                    grid: { color: 'gray' }, 
-                    ticks: { color: 'red' }, 
+                    y: {
+                        type: 'linear',
+                        grid: {
+                            color: (ctx) => ctx.tick.value === 0 ? 'green' : 'gray', // y-axis in green, grid lines in gray
+                            lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 0.5 // Thicker for the y-axis
+                        },
+                        ticks: {
+                            color: 'green' // y-axis tick labels in green
+                        }
+                    },
                     min: -10, 
                     max: 10 
                 }
