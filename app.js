@@ -54,16 +54,15 @@ function initGraph(a = 1, b = 0, c = 0) {
                     max: 10 
                 },
                 y: { 
-                    y: {
-                        type: 'linear',
-                        grid: {
-                            color: (ctx) => ctx.tick.value === 0 ? 'green' : 'gray', // y-axis in green, grid lines in gray
+                    type: 'linear',
+                    grid: {
+                        color: (ctx) => ctx.tick.value === 0 ? 'green' : 'gray', // y-axis in green, grid lines in gray
                             lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 0.5 // Thicker for the y-axis
                         },
                         ticks: {
                             color: 'green' // y-axis tick labels in green
-                        }
-                    },
+                        },
+                    
                     min: -10, 
                     max: 10 
                 }
